@@ -9,6 +9,8 @@ import java.awt.Font;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.util.ArrayList;
 
 import javax.swing.*;
@@ -118,6 +120,25 @@ public class UI {
 			f.setBounds(130,i*60+60,50,45);
 			f.setText("Radius");
 			f.setHorizontalAlignment(JTextField.CENTER);
+		    f.addFocusListener(new FocusListener() {
+
+	            @Override
+	            public void focusLost(FocusEvent arg0) {
+	                // TODO Auto-generated method stub
+	            	if(f.getText().equals("")) {
+	            		f.setText("Radius");
+	            	}
+	            	 
+	            }
+
+	            @Override
+	            public void focusGained(FocusEvent arg0) {
+	                // TODO Auto-generated method stub
+	               f.setText("");
+	            }
+
+				
+	        });
 			fields.add(f);
 			addToW(f);
 		}
@@ -163,6 +184,7 @@ public class UI {
 				clearB();
 				
 				Display display = new Display(trans);
+				animAsk();
 			}
 		});
 		addToB(submit);
@@ -196,7 +218,23 @@ public class UI {
 		}
 		
 	}
-	
+	private void animAsk() {
+		JButton start = new JButton();
+		start.setText("start");
+		start.setSize(80, 30);
+		start.setLocation(panel.getWidth()-start.getWidth()-10, panel.getHeight()-start.getHeight()-10);
+		start.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				anim();
+			}
+		});
+		addToB(start);
+	}
+	private void anim() {
+		
+	}
 }
 class JButtonM extends JButton{
 	int id;
