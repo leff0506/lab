@@ -23,6 +23,7 @@ public class UI {
 	private static ArrayList<Component> dataWhite = new ArrayList<>();
 	private static ArrayList<Charge> trans = new ArrayList<>();
 	private static JFrame frame ;
+	public static boolean keep = true;
 	public static int st_am;
 	public static JPanel panel;
 	private static JPanel white;
@@ -233,8 +234,53 @@ public class UI {
 		addToB(start);
 	}
 	private void anim() {
-		
+		if(st_am==2) {
+			drawThread();
+//			updateThread2();
+		}
 	}
+	private synchronized void drawThread() {
+		Thread th = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				long prev = System.currentTimeMillis();
+				while (keep) {
+					long t = System.currentTimeMillis();
+					if(t-prev>=20) {
+						frame.repaint();
+						
+						prev = t;
+					}
+				}
+				
+				
+			}
+		});
+		th.start();
+	}
+//	private synchronized void updateThread2() {
+//		Thread th = new Thread(new Runnable() {
+//			
+//			@Override
+//			public void run() {
+//				long prev = System.currentTimeMillis();
+//				while (keep) {
+//					long t = System.currentTimeMillis();
+//					if(t-prev>=20) {
+//						
+//						if() {
+//							
+//						}
+//						prev = t;
+//					}
+//				}
+//				
+//				
+//			}
+//		});
+//		th.start();
+//	}
 }
 class JButtonM extends JButton{
 	int id;
