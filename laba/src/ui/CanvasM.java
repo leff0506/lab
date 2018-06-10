@@ -54,6 +54,10 @@ public class CanvasM extends JPanel{
 //				g.setColor(new Color(255,0,0,70));
 //				g.drawOval(c.x+Charge.radius/2-radius/2,c.y+Charge.radius/2-radius/2,radius,radius);
 			}
+			
+			
+		}
+		for(Charge c: data) {
 			if(c.positive==0) {
 				g.setColor(Color.BLUE);
 			}else {
@@ -75,7 +79,6 @@ public class CanvasM extends JPanel{
 				g.drawLine(c.x-1+Charge.radius/2, c.y-5+Charge.radius/2, c.x-1+Charge.radius/2,c.y+5+Charge.radius/2);
 				g.drawLine(c.x+1+Charge.radius/2, c.y-5+Charge.radius/2, c.x+1+Charge.radius/2,c.y+5+Charge.radius/2);
 			}
-			
 		}
 	}
 	public synchronized static void setData(ArrayList<Charge> data1) {

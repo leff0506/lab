@@ -272,7 +272,7 @@ public class UI {
 					y11=trans.get(0).y;
 					y21=trans.get(1).y;
 					y31=trans.get(2).y;
-					if(x1==x11&&x2==x21&&x1==x31&&y1==y11&&y2==y21&&y3==y31) {
+					if(x1==x11&&x2==x21&&x3==x31&&y1==y11&&y2==y21&&y3==y31) {
 						keepP=false;
 					}
 				}
@@ -293,18 +293,34 @@ public class UI {
 				while (keepP) {
 					
 					long t = System.currentTimeMillis();
-					if(t-prev>=150) {
-						frame.repaint();
-						
-						prev = t;
-					}
-					if(st_am==3) {
-						keepP=keep1||keep2||keep3;
-						if(temp ==0) {
-							temp++;
-							keepP=true;
+					if(st_am==2) {
+						if(t-prev>=17) {
+							frame.repaint();
+							
+							prev = t;
+						}
+						if(st_am==3) {
+							keepP=keep1||keep2||keep3;
+							if(temp ==0) {
+								temp++;
+								keepP=true;
+							}
+						}
+					}else {
+						if(t-prev>=35) {
+							frame.repaint();
+							
+							prev = t;
+						}
+						if(st_am==3) {
+							keepP=keep1||keep2||keep3;
+							if(temp ==0) {
+								temp++;
+								keepP=true;
+							}
 						}
 					}
+					
 				}
 				
 				
@@ -320,7 +336,7 @@ public class UI {
 				long prev = System.currentTimeMillis();
 				while (keepP) {
 					long t = System.currentTimeMillis();
-					if(t-prev>150) {
+					if(t-prev>100) {
 						
 						if(trans.get(1).x-trans.get(0).x<=trans.get(0).strength*CanvasM.strength/2+Charge.radius/2+trans.get(1).strength*CanvasM.strength/2+Charge.radius/2) {
 							System.out.println("Intaraction");
@@ -381,7 +397,7 @@ public class UI {
 				long prev = System.currentTimeMillis();
 				while (keepP) {
 					long t = System.currentTimeMillis();
-					if(t-prev>200) {
+					if(t-prev>35) {
 						
 						if(Math.sqrt((trans.get(1).x-trans.get(0).x)*(trans.get(1).x-trans.get(0).x)+(trans.get(0).y-trans.get(1).y)*(trans.get(0).y-trans.get(1).y))<=trans.get(0).strength*CanvasM.strength/2+Charge.radius/2+trans.get(1).strength*CanvasM.strength/2+Charge.radius/2) {
 							System.out.println("Intaraction");
@@ -512,7 +528,7 @@ public class UI {
 				
 				while (keepP) {
 					long t = System.currentTimeMillis();
-					if(t-prev>200) {
+					if(t-prev>35) {
 						
 						if(Math.sqrt((trans.get(2).x-trans.get(1).x)*(trans.get(2).x-trans.get(1).x)+(trans.get(2).y-trans.get(1).y)*(trans.get(2).y-trans.get(1).y))<=trans.get(2).strength*CanvasM.strength/2+Charge.radius/2+trans.get(1).strength*CanvasM.strength/2+Charge.radius/2) {
 							System.out.println("Intaraction");
@@ -644,7 +660,7 @@ public class UI {
 				long prev = System.currentTimeMillis();
 				while (keepP) {
 					long t = System.currentTimeMillis();
-					if(t-prev>200) {
+					if(t-prev>35) {
 						
 						if(Math.sqrt((trans.get(2).x-trans.get(0).x)*(trans.get(2).x-trans.get(0).x))<=trans.get(2).strength*CanvasM.strength/2+Charge.radius/2+trans.get(0).strength*CanvasM.strength/2+Charge.radius/2) {
 							System.out.println("Intaraction");
