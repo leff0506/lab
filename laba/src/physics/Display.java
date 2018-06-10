@@ -6,7 +6,7 @@ import ui.CanvasM;
 import ui.UI;
 
 public class Display {
-	private ArrayList<Charge> data = new ArrayList<>();
+	private ArrayList<Charge> data ;
 	public static CanvasM canv;
 	public Display(ArrayList<Charge> data) {
 		this.data = data;

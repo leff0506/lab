@@ -6,12 +6,11 @@ public class Charge {
 	public int strength;
 	public int positive;
 	public int oPos;
-	public int x;
+	public  int x;
 	public int y;
 	
 	public static final int PADDING =120;
-	public static final int kStrength =40;
-	public static final int radius = 45;
+	public static final int radius = 65;
 	public Charge(int pos,int positive,int strength) {
 		this.oPos=pos;
 		this.positive=positive;

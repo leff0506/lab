@@ -23,7 +23,10 @@ public class UI {
 	private static ArrayList<Component> dataWhite = new ArrayList<>();
 	private static ArrayList<Charge> trans = new ArrayList<>();
 	private static JFrame frame ;
-	public static boolean keep = true;
+	public static boolean keepP = true;
+	public static boolean keep1 = true;
+	public static boolean keep2 = true;
+	public static boolean keep3 = true;
 	public static int st_am;
 	public static JPanel panel;
 	private static JPanel white;
@@ -33,7 +36,7 @@ public class UI {
 	
 	public UI() {
 		frame = new JFrame("Interaction of point charges");
-		frame.setSize(600,600);
+		frame.setSize(900,900);
 		frame.setLocation(screen.width/2-frame.getWidth()/2,screen.height/2-frame.getHeight()/2);
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -234,22 +237,133 @@ public class UI {
 		addToB(start);
 	}
 	private void anim() {
-		if(st_am==2) {
+		switch(st_am) {
+		case 2:
 			drawThread();
-//			updateThread2();
+			updateThread2();
+			break;
+		case 3:updateThread301();updateThread312();updateThread302();drawThread();stopThread();break;
+		
 		}
 	}
+	private synchronized void stopThread() {
+		Thread th = new Thread(new Runnable() {
+			int temp=0;
+			@Override
+			public void run() {
+				int x1,x2,x3,y1,y2,y3;
+				int x11,x21,x31,y11,y21,y31;
+				while(keepP) {
+					x1=trans.get(0).x;
+					x2=trans.get(1).x;
+					x3=trans.get(2).x;
+					y1=trans.get(0).y;
+					y2=trans.get(1).y;
+					y3=trans.get(2).y;
+					try {
+						Thread.sleep(300);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					x11=trans.get(0).x;
+					x21=trans.get(1).x;
+					x31=trans.get(2).x;
+					y11=trans.get(0).y;
+					y21=trans.get(1).y;
+					y31=trans.get(2).y;
+					if(x1==x11&&x2==x21&&x1==x31&&y1==y11&&y2==y21&&y3==y31) {
+						keepP=false;
+					}
+				}
+				
+				
+			}
+		});
+		th.start();
+	}
+	
 	private synchronized void drawThread() {
+		Thread th = new Thread(new Runnable() {
+			int temp=0;
+			@Override
+			public void run() {
+				long prev = System.currentTimeMillis();
+				int am=0;
+				while (keepP) {
+					
+					long t = System.currentTimeMillis();
+					if(t-prev>=150) {
+						frame.repaint();
+						
+						prev = t;
+					}
+					if(st_am==3) {
+						keepP=keep1||keep2||keep3;
+						if(temp ==0) {
+							temp++;
+							keepP=true;
+						}
+					}
+				}
+				
+				
+			}
+		});
+		th.start();
+	}
+	private synchronized void updateThread2() {
 		Thread th = new Thread(new Runnable() {
 			
 			@Override
 			public void run() {
 				long prev = System.currentTimeMillis();
-				while (keep) {
+				while (keepP) {
 					long t = System.currentTimeMillis();
-					if(t-prev>=20) {
-						frame.repaint();
+					if(t-prev>150) {
 						
+						if(trans.get(1).x-trans.get(0).x<=trans.get(0).strength*CanvasM.strength/2+Charge.radius/2+trans.get(1).strength*CanvasM.strength/2+Charge.radius/2) {
+							System.out.println("Intaraction");
+							if(trans.get(1).positive==trans.get(0).positive) {
+								System.out.println("unforce");
+								if(trans.get(1).x-trans.get(0).x<=trans.get(0).strength*CanvasM.strength/2+Charge.radius/2+trans.get(1).strength*CanvasM.strength/2+Charge.radius/2) {
+									if(trans.get(0).x+trans.get(0).strength*CanvasM.strength/2+Charge.radius/2>=trans.get(1).x||trans.get(1).x+Charge.radius/2-trans.get(1).strength*CanvasM.strength/2<trans.get(0).x+Charge.radius) {
+										trans.get(1).x+=3;
+										trans.get(0).x-=3;
+									}else {
+										trans.get(1).x++;
+										trans.get(0).x--;
+									}
+									
+								}else {
+									keepP=false;
+								}
+							}else {
+								System.out.println("force");
+								if(trans.get(1).x-trans.get(0).x>=Charge.radius) {
+									System.out.println("Change)");
+									if(trans.get(0).x+trans.get(0).strength*CanvasM.strength/2+Charge.radius/2>=trans.get(1).x||trans.get(1).x+Charge.radius/2-trans.get(1).strength*CanvasM.strength/2<trans.get(0).x+Charge.radius) {
+										trans.get(1).x-=3;
+										if(trans.get(1).x>=trans.get(0).x+Charge.radius) {
+											trans.get(0).x+=3;
+										}else {
+											trans.get(1).x=trans.get(0).x+Charge.radius-1;
+										}
+										
+										
+									}else {
+										trans.get(1).x--;
+										trans.get(0).x++;
+									}
+									
+								}else {
+									keepP=false;
+								}
+							}
+							CanvasM.setData(trans);
+						}else {
+							keepP=false;
+						}
 						prev = t;
 					}
 				}
@@ -259,29 +373,422 @@ public class UI {
 		});
 		th.start();
 	}
-//	private synchronized void updateThread2() {
-//		Thread th = new Thread(new Runnable() {
-//			
-//			@Override
-//			public void run() {
-//				long prev = System.currentTimeMillis();
-//				while (keep) {
-//					long t = System.currentTimeMillis();
-//					if(t-prev>=20) {
-//						
-//						if() {
-//							
-//						}
-//						prev = t;
-//					}
-//				}
-//				
-//				
-//			}
-//		});
-//		th.start();
-//	}
+	private synchronized void updateThread301() {
+		Thread th = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				long prev = System.currentTimeMillis();
+				while (keepP) {
+					long t = System.currentTimeMillis();
+					if(t-prev>200) {
+						
+						if(Math.sqrt((trans.get(1).x-trans.get(0).x)*(trans.get(1).x-trans.get(0).x)+(trans.get(0).y-trans.get(1).y)*(trans.get(0).y-trans.get(1).y))<=trans.get(0).strength*CanvasM.strength/2+Charge.radius/2+trans.get(1).strength*CanvasM.strength/2+Charge.radius/2) {
+							System.out.println("Intaraction");
+							if(trans.get(1).positive!=trans.get(0).positive) {
+								System.out.println("force");
+								if(Math.sqrt((trans.get(1).x-trans.get(0).x)*(trans.get(1).x-trans.get(0).x)+(trans.get(1).y-trans.get(0).y)*(trans.get(1).y-trans.get(0).y))>=Charge.radius) {
+									System.out.println("Change)");
+									if(Math.sqrt((trans.get(1).x-trans.get(0).x)*(trans.get(1).x-trans.get(0).x)+(trans.get(1).y-trans.get(0).y)*(trans.get(1).y-trans.get(0).y))<trans.get(0).strength*CanvasM.strength/2||Math.sqrt(trans.get(1).x-trans.get(0).x)*(trans.get(1).x-trans.get(0).x)+(trans.get(1).y-trans.get(0).y)*(trans.get(1).y-trans.get(0).y)<trans.get(1).strength*CanvasM.strength/2) {
+										
+											
+										if(trans.get(1).x>trans.get(0).x) {
+											trans.get(1).x-=6;
+										
+											trans.get(0).x+=6;
+											
+										}else if(trans.get(1).x==trans.get(0).x){}else{
+											trans.get(1).x+=6;
+											
+											trans.get(0).x-=6;
+											
+										}
+										
+										if(trans.get(1).y<trans.get(0).y) {
+											trans.get(1).y+=6;
+											trans.get(0).y-=6;
+										}else if(trans.get(1).y==trans.get(0).y){}else{
+											trans.get(1).y-=6;
+											trans.get(0).y+=6;
+										}
+										
+											
+									
+										
+									
+									}else {
+										
+										if(trans.get(1).x>trans.get(0).x) {
+											trans.get(1).x-=2;
+										
+											trans.get(0).x+=2;
+											
+										}else if(trans.get(1).x==trans.get(0).x){}else{
+											trans.get(1).x+=2;
+											
+											trans.get(0).x-=2;
+											
+										}
+										if(trans.get(1).y<trans.get(0).y) {
+											trans.get(1).y+=2;
+											trans.get(0).y-=2;
+										}else if(trans.get(1).y==trans.get(0).y){}else{
+											trans.get(1).y-=2;
+											trans.get(0).y+=2;
+										}
+										
+										
+									}
+									
+								}else {
+									keep1=false;
+								}
+							}else {
+								System.out.println("unforce");
+								if(Math.sqrt((trans.get(1).x-trans.get(0).x)*(trans.get(1).x-trans.get(0).x)+(trans.get(1).y-trans.get(0).y)*(trans.get(1).y-trans.get(0).y))<=trans.get(0).strength*CanvasM.strength/2+Charge.radius/2+trans.get(1).strength*CanvasM.strength/2+Charge.radius/2) {
+									if(Math.sqrt((trans.get(1).x-trans.get(0).x)*(trans.get(1).x-trans.get(0).x)+(trans.get(1).y-trans.get(0).y)*(trans.get(1).y-trans.get(0).y))<trans.get(0).strength*CanvasM.strength/2||Math.sqrt(trans.get(1).x-trans.get(0).x)*(trans.get(1).x-trans.get(0).x)+(trans.get(1).y-trans.get(0).y)*(trans.get(1).y-trans.get(0).y)<trans.get(1).strength*CanvasM.strength/2) {
+										if(trans.get(1).x>trans.get(0).x) {
+											trans.get(1).x+=6;
+											trans.get(0).x-=6;
+										}else if(trans.get(1).x==trans.get(0).x){}else{
+											trans.get(1).x-=6;
+											trans.get(0).x+=6;
+										}
+										if(trans.get(1).y<trans.get(0).y) {
+											trans.get(1).y-=6;
+											trans.get(0).y+=6;
+										}else if(trans.get(1).y==trans.get(0).y){}else{
+											trans.get(1).y+=6;
+											trans.get(0).y-=6;
+										}
+
+										
+									}else {
+										
+										if(trans.get(1).x>trans.get(0).x) {
+											trans.get(1).x+=2;
+											trans.get(0).x-=2;
+										}else if(trans.get(1).x==trans.get(0).x){}else{
+											trans.get(1).x-=2;
+											trans.get(0).x+=2;
+										}
+										if(trans.get(1).y<trans.get(0).y) {
+											trans.get(1).y-=2;
+											trans.get(0).y+=2;
+										}else if(trans.get(1).y==trans.get(0).y){}else{
+											trans.get(1).y+=2;
+											trans.get(0).y-=2;
+										}
+										
+										
+									}
+									
+								}else {
+									keep1=false;
+								}
+							}
+							CanvasM.setData(trans);
+						}
+						
+						else {
+							keep1=false;
+							
+						}
+						prev = t;
+					}
+				}
+				
+				
+			}
+		});
+		th.start();
+	}
+	private synchronized void updateThread312() {
+		Thread th = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				long prev = System.currentTimeMillis();
+				
+				while (keepP) {
+					long t = System.currentTimeMillis();
+					if(t-prev>200) {
+						
+						if(Math.sqrt((trans.get(2).x-trans.get(1).x)*(trans.get(2).x-trans.get(1).x)+(trans.get(2).y-trans.get(1).y)*(trans.get(2).y-trans.get(1).y))<=trans.get(2).strength*CanvasM.strength/2+Charge.radius/2+trans.get(1).strength*CanvasM.strength/2+Charge.radius/2) {
+							System.out.println("Intaraction");
+							if(trans.get(2).positive!=trans.get(1).positive) {
+								
+								System.out.println("force");
+								if(Math.sqrt((trans.get(2).x-trans.get(1).x)*(trans.get(2).x-trans.get(1).x)+(trans.get(2).y-trans.get(1).y)*(trans.get(2).y-trans.get(1).y))>=Charge.radius) {
+									System.out.println("Change)");
+									if(Math.sqrt((trans.get(2).x-trans.get(1).x)*(trans.get(2).x-trans.get(1).x)+(trans.get(2).y-trans.get(1).y)*(trans.get(2).y-trans.get(1).y))<trans.get(2).strength*CanvasM.strength/2||Math.sqrt(trans.get(2).x-trans.get(1).x)*(trans.get(2).x-trans.get(1).x)+(trans.get(2).y-trans.get(1).y)*(trans.get(2).y-trans.get(1).y)<trans.get(1).strength*CanvasM.strength/2) {
+										if(trans.get(2).x>trans.get(1).x) {
+											trans.get(2).x-=6;
+											trans.get(1).x+=6;
+										}else if(trans.get(2).x==trans.get(1).x){}else{
+											trans.get(2).x+=6;
+											trans.get(1).x-=6;
+										}
+											
+										if(trans.get(1).y<trans.get(2).y) {	
+
+											trans.get(2).y-=6;
+											trans.get(1).y+=6;
+										
+										}else if(trans.get(1).y==trans.get(2).y){}else{
+											trans.get(2).y+=6;
+											trans.get(1).y-=6;
+										}
+										
+											
+										
+										
+									}else {
+										
+										if(trans.get(2).x>trans.get(1).x) {
+											trans.get(2).x-=2;
+											trans.get(1).x+=2;
+										}else if(trans.get(2).x==trans.get(1).x){}else{
+											trans.get(2).x+=2;
+											trans.get(1).x-=2;
+										}
+											
+										if(trans.get(1).y<trans.get(2).y) {	
+
+											trans.get(2).y-=2;
+											trans.get(1).y+=2;
+										
+										}else if(trans.get(1).y==trans.get(2).y){}else{
+											trans.get(2).y+=2;
+											trans.get(1).y-=2;
+										}
+										
+										
+									}
+									
+								}else {
+									keep2=false;
+								}
+							}else {
+								System.out.println("unforce");
+								if(Math.sqrt((trans.get(2).x-trans.get(1).x)*(trans.get(2).x-trans.get(1).x)+(trans.get(2).y-trans.get(1).y)*(trans.get(2).y-trans.get(1).y))<=trans.get(2).strength*CanvasM.strength/2+Charge.radius/2+trans.get(1).strength*CanvasM.strength/2+Charge.radius/2) {
+									if(Math.sqrt((trans.get(2).x-trans.get(1).x)*(trans.get(2).x-trans.get(1).x)+(trans.get(2).y-trans.get(1).y)*(trans.get(2).y-trans.get(1).y))<trans.get(1).strength*CanvasM.strength/2||Math.sqrt(trans.get(2).x-trans.get(1).x)*(trans.get(2).x-trans.get(1).x)+(trans.get(2).y-trans.get(1).y)*(trans.get(2).y-trans.get(1).y)<trans.get(1).strength*CanvasM.strength/2) {
+										
+										if(trans.get(2).x>trans.get(1).x) {
+											trans.get(2).x+=6;
+											trans.get(1).x-=6;
+										}else if(trans.get(2).x==trans.get(1).x){}else{
+											trans.get(2).x-=6;
+											trans.get(1).x+=6;
+										}
+											
+										if(trans.get(1).y<trans.get(2).y) {	
+
+											trans.get(2).y+=6;
+											trans.get(1).y-=6;
+										
+										}else if(trans.get(1).y==trans.get(2).y){}else{
+											trans.get(2).y-=6;
+											trans.get(1).y+=6;
+										}
+										
+											
+										
+										
+									}else {
+										
+										if(trans.get(2).x>trans.get(1).x) {
+											trans.get(2).x+=2;
+											trans.get(1).x-=2;
+										}else if(trans.get(2).x==trans.get(1).x){}else{
+											trans.get(2).x-=2;
+											trans.get(1).x+=2;
+										}
+											
+										if(trans.get(1).y<trans.get(2).y) {	
+
+											trans.get(2).y+=2;
+											trans.get(1).y-=2;
+										
+										}else if(trans.get(1).y==trans.get(2).y){}else{
+											trans.get(2).y-=2;
+											trans.get(1).y+=2;
+										}
+										
+									}
+									
+								}else {
+									keep2=false;
+								}
+							}
+							CanvasM.setData(trans);
+						}
+						
+						else {
+							keep2=false;
+						}
+						prev = t;
+					}
+				}
+				
+				
+			}
+		});
+		th.start();
+	}
+	private synchronized void updateThread302() {
+		Thread th = new Thread(new Runnable() {
+			
+			@Override
+			public void run() {
+				long prev = System.currentTimeMillis();
+				while (keepP) {
+					long t = System.currentTimeMillis();
+					if(t-prev>200) {
+						
+						if(Math.sqrt((trans.get(2).x-trans.get(0).x)*(trans.get(2).x-trans.get(0).x))<=trans.get(2).strength*CanvasM.strength/2+Charge.radius/2+trans.get(0).strength*CanvasM.strength/2+Charge.radius/2) {
+							System.out.println("Intaraction");
+							if(trans.get(2).positive!=trans.get(0).positive) {
+								
+								System.out.println("force");
+								if(Math.sqrt((trans.get(2).x-trans.get(0).x)*(trans.get(2).x-trans.get(0).x))>=Charge.radius) {
+									System.out.println("Change)");
+									if(Math.sqrt((trans.get(2).x-trans.get(0).x)*(trans.get(2).x-trans.get(0).x)+(trans.get(2).y-trans.get(0).y)*(trans.get(2).y-trans.get(0).y))<trans.get(2).strength*CanvasM.strength/2||Math.sqrt(trans.get(2).x-trans.get(0).x)*(trans.get(2).x-trans.get(0).x)<trans.get(0).strength*CanvasM.strength/2) {
+										
+										if(trans.get(2).x>trans.get(0).x) {
+											trans.get(2).x-=6;
+											
+											trans.get(0).x+=6;
+										}else if(trans.get(2).x==trans.get(0).x) {
+											
+										}else {
+											trans.get(2).x+=6;
+											
+											trans.get(0).x-=6;
+										}
+										
+										if(trans.get(2).y>trans.get(0).y) {
+											trans.get(2).y-=6;
+											trans.get(0).y+=6;
+										}else if(trans.get(2).y==trans.get(0).y) {
+											
+										}else {
+											trans.get(2).y+=6;
+											trans.get(0).y-=6;
+										}
+											
+										
+										
+											
+										
+										
+										
+									}else {
+										if(trans.get(2).x>trans.get(0).x) {
+											trans.get(2).x-=2;
+											
+											trans.get(0).x+=2;
+										}else if(trans.get(2).x==trans.get(0).x) {
+											
+										}else {
+											trans.get(2).x+=2;
+											
+											trans.get(0).x-=2;
+										}
+										
+										if(trans.get(2).y>trans.get(0).y) {
+											trans.get(2).y-=2;
+											trans.get(0).y+=2;
+										}else if(trans.get(2).y==trans.get(0).y) {
+											
+										}else {
+											trans.get(2).y+=2;
+											trans.get(0).y-=2;
+										}
+									}
+									
+								}else {
+									keep3=false;
+								}
+							}else {
+								System.out.println("unforce");
+								if(Math.sqrt((trans.get(2).x-trans.get(0).x)*(trans.get(2).x-trans.get(0).x))<=trans.get(2).strength*CanvasM.strength/2+Charge.radius/2+trans.get(0).strength*CanvasM.strength/2+Charge.radius/2) {
+									if(Math.sqrt((trans.get(2).x-trans.get(0).x)*(trans.get(2).x-trans.get(0).x)+(trans.get(2).y-trans.get(0).y)*(trans.get(2).y-trans.get(0).y))<trans.get(0).strength*CanvasM.strength/2||Math.sqrt(trans.get(2).x-trans.get(0).x)*(trans.get(2).x-trans.get(0).x)<trans.get(2).strength*CanvasM.strength/2) {
+										
+										
+										if(trans.get(2).x>trans.get(0).x) {
+											trans.get(2).x+=6;
+											
+											trans.get(0).x-=6;
+										}else if(trans.get(2).x==trans.get(0).x) {
+											
+										}else {
+											trans.get(2).x-=6;
+											
+											trans.get(0).x+=6;
+										}
+										
+										if(trans.get(2).y>trans.get(0).y) {
+											trans.get(2).y+=6;
+											trans.get(0).y-=6;
+										}else if(trans.get(2).y==trans.get(0).y) {
+											
+										}else {
+											trans.get(2).y-=6;
+											trans.get(0).y+=6;
+										}
+											
+										
+										
+											
+										
+										
+										
+									}else {
+										if(trans.get(2).x>trans.get(0).x) {
+											trans.get(2).x+=2;
+											
+											trans.get(0).x-=2;
+										}else if(trans.get(2).x==trans.get(0).x) {
+											
+										}else {
+											trans.get(2).x-=2;
+											
+											trans.get(0).x+=2;
+										}
+										
+										if(trans.get(2).y>trans.get(0).y) {
+											trans.get(2).y+=2;
+											trans.get(0).y-=2;
+										}else if(trans.get(2).y==trans.get(0).y) {
+											
+										}else {
+											trans.get(2).y-=2;
+											trans.get(0).y+=2;
+										}
+									}
+									
+								}else {
+									keep3=false;
+								}
+							}
+							CanvasM.setData(trans);
+						}
+						
+						else {
+							keep3=false;
+						}
+						prev = t;
+					}
+				}
+				
+				
+			}
+		});
+		th.start();
+	}
 }
+
 class JButtonM extends JButton{
 	int id;
 }
